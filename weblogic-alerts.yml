@@ -1,0 +1,125 @@
+  groups:
+  - name: Weblogic
+    interval: 10s
+    rules:
+    - alert: ManagedServerDown
+      expr: up{weblogic_domainUID!="",weblogic_serverName!="",cluster="",weblogic_serverName!~".*_prod"} == 0
+      for: 30s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "MS Down: {{ $labels.weblogic_serverName }}"
+    - alert: ManagedClusterDown
+      expr: sum(up{weblogic_domainUID!="",cluster!=""}) by (cluster,weblogic_domainUID)<1
+      for: 30s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "MS Cluster Down: {{ $labels.cluster }}_stanby and {{ $labels.cluster }}_master"
+    - alert: DSDown
+      expr: weblogic_jdbcdatasource_enabled{weblogic_domainUID!="", weblogic_serverName!=""} == 0
+      for: 60s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "DS Down: {{ $labels.name }} on {{ $labels.weblogic_serverName }}"
+    - alert: StuckThread
+      expr: sum by(weblogic_domainUID,weblogic_serverName) (weblogic_threadpool_stuck_thread_count) > 7
+      for: 600s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "{{ $value }} Stuck threads on {{ $labels.weblogic_serverName }}"
+    - alert: HeapUsage
+      expr: round(jvm_memory_bytes_used{area="heap"}/jvm_memory_bytes_max{area="heap"}*100,1) > 95
+      for: 30s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "{{ $value }}% Heap usage on {{ $labels.weblogic_serverName }}"
+    - alert: NonHeapUsage
+      expr: round(jvm_memory_bytes_used{area="nonheap"}/jvm_memory_bytes_max{area="nonheap"}*100,1) > 95
+      for: 30s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "{{ $value }}% Heap usage on {{ $labels.weblogic_serverName }}"
+    - alert: MetaspaceUsage
+      expr: round(jvm_memory_pool_bytes_used{pool="Metaspace"}/jvm_memory_pool_bytes_max{pool="Metaspace"}*100,1) > 95
+      for: 30s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "{{ $value }}% Metaspace usage on {{ $labels.weblogic_serverName }}"
+    - alert: JavaCpuUsage
+      expr: round(weblogic_system_cpu_load*100,1) > 90
+      for: 30s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "{{ $value }}% cpu usage on {{ $labels.instance }} by server {{ $labels.weblogic_serverName }}"
+    - alert: ExecTimePerRequest
+      expr: (sum(weblogic_application_execution_time_total{}) by (application,weblogic_serverName)) / (sum(weblogic_application_invocation_total_count{}) by (application,weblogic_serverName)) > 3000
+      for: 30s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "{{ $labels.application }} on server {{ $labels.weblogic_serverName }} exec time per request: {{ $value }}"
+    - alert: WorkManagerQueue
+      expr: weblogic_threadpool_queue_length{weblogic_serverName!="AdminServer"} > 1
+      for: 0s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "Work Manager Queue {{ $value }} on {{ $labels.weblogic_serverName }}"
+    - alert: WorkManagerRejected
+      expr: weblogic_threadpool_overload_rejected_requests_count{weblogic_serverName!="AdminServer"} > 1
+      for: 0s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "Work Manager Rejected {{ $value }} on {{ $labels.weblogic_serverName }}"
+    - alert: DatasourceConnectionWaited
+      expr: weblogic_jdbcdatasource_waiting_for_connection_current_count{weblogic_serverName!="AdminServer"} > 1
+      for: 0s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "Datasource Connection waiting {{ $value }} on {{ $labels.weblogic_serverName }}"
+    - alert: DatasourceConnectionWaitedFailure
+      expr: delta(weblogic_jdbcdatasource_waiting_for_connection_failure_total{weblogic_serverName!="AdminServer"}[1m])/delta(weblogic_jdbcdatasource_waiting_for_connection_total{weblogic_serverName!="AdminServer"}[1m]) > 0
+      for: 1m
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "Percent Datasource Failure connection waiting {{ $value }}% on {{ $labels.weblogic_serverName }}"
+    - alert: JavaGCYoung
+      expr: delta(jvm_gc_collection_seconds_sum{gc="G1 Young Generation",weblogic_serverName!="AdminServer"}[1m])*delta(jvm_gc_collection_seconds_count{gc="G1 Young Generation",weblogic_serverName!="AdminServer"}[1m]) > 10
+      for: 0s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "GC Young spend {{ $value }} second at last 1-min on {{ $labels.weblogic_serverName }}"
+    - alert: JavaGCOld
+      expr: delta(jvm_gc_collection_seconds_sum{gc="G1 Old Generation",weblogic_serverName!="AdminServer"}[1m])*delta(jvm_gc_collection_seconds_count{gc="G1 Old Generation",weblogic_serverName!="AdminServer"}[1m]) > 10
+      for: 0s
+      labels:
+        severity: critical
+        labelscount: "{{ len $labels }}"
+      annotations:
+        summary: "GC Old spend {{ $value }} second at last 1-min on {{ $labels.weblogic_serverName }}"
+
