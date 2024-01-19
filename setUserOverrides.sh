@@ -50,7 +50,7 @@ getPortFromAdminServer()
 	export T3ADMIN_URL="${ADMIN_URL/http/t3}"
 	echo "=============================================="
 	echo "Try get port from AdminServer...."
-	$MW_HOME/oracle_common/common/bin/wlst.sh /opt/oracle/user_projects/domains/dc_domain/bin/getPortFromAdminServer.py
+	$MW_HOME/oracle_common/common/bin/wlst.sh ${DOMAIN_HOME}/bin/getPortFromAdminServer.py
 	PORT=$(cat /tmp/msport.txt)
 	echo "=============================================="
 
