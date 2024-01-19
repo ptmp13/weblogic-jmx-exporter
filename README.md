@@ -48,11 +48,12 @@ In output you must see field __listenPort__
 
 Check it
 ```bash
+export DOMAIN_HOME=<DOMAIN_HOME>
 export T3ADMIN_URL="t3://lost.com:7001"
 export SERVER_NAME=AdminServer
 export wluser=monitor
 export wlpass=test
-$MW_HOME/oracle_common/common/bin/wlst.sh /opt/oracle/user_projects/domains/dc_domain/bin/getPortFromAdminServer.py
+$MW_HOME/oracle_common/common/bin/wlst.sh ${DOMAIN_HOME}/bin/getPortFromAdminServer.py
 ```
 
 ### Old systems like RHEL/OEL/CentOS 6
