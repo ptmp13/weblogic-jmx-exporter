@@ -16,7 +16,7 @@ Open setUserOverrides.sh and set variables:
 1. _wluser_ - username who have at least __Monitor__ role!
 2. _wlpass_ - password from wluser
 
-You can don`t set this vars, but in this case you can`t get port for Dynamic Cluster servers.
+You can dont set this vars, but in this case you cant get port for Dynamic Cluster servers.
 For 12c weblogic best way to get port from REST API (jq must install for parse output), but its way reqired wluser/wlpass.
 
 ### Problems
