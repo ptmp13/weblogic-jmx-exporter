@@ -1,0 +1,23 @@
+- targets: ["host1:17001"]
+  labels:
+    weblogic_domainUID: prod_domain
+    weblogic_serverName: AdminServer
+    weblogic_clusterName: none
+    service: wls
+    lifecycle: prod
+
+- targets: ["host2:18003"]
+  labels:
+    weblogic_domainUID: prod_domain
+    weblogic_serverName: prod_1
+    weblogic_clusterName: none
+    service: wls
+    lifecycle: prod
+
+- targets: ["host3:17001"]
+  labels:
+    weblogic_domainUID: test_domain
+    weblogic_serverName: AdminServer
+    weblogic_clusterName: none
+    service: wls
+    lifecycle: test
