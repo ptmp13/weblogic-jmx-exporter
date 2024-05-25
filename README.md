@@ -69,3 +69,8 @@ This support 3 ways for get port for current managed server
 3) Parse config.xml - python
 
 Priority 1-2-3 becouse only 1,2 support Dynamic Clusters, therefore 100% will return port but its required wluser/wlport + jq 
+
+## Prometheus SD sample
+
+You must add managed server like in file
+__prometheus_wls_sd.yml__
